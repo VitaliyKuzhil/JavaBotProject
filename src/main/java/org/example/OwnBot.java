@@ -1,13 +1,21 @@
 package org.example;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 import net.thauvin.erik.crypto.CryptoPrice;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+
 public class OwnBot extends TelegramLongPollingBot {
+
+    private static final Dotenv dotenv = Dotenv.configure().load();
+    private static final String NAME_BOT = dotenv.get("NAME_BOT");
+    private static final String TOKEN = dotenv.get("TOKEN");
+
     public OwnBot() {
-        super("6810531953:AAHNA51wzNRJ21Uson31oCc3d2puSUAhGY4");
+        super(TOKEN);
     }
 
     @Override
@@ -83,6 +91,6 @@ public class OwnBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "First_java24_bot";
+        return NAME_BOT;
     }
 }
