@@ -24,22 +24,18 @@ public class OwnBot extends TelegramLongPollingBot {
         var text = update.getMessage().getText();
 
         try {
-            var message = new SendMessage();
-            message.setChatId(chatId);
-
             if (text.contains(",")) {
                 String[] currencies = text.split(",");
-                StringBuilder response = new StringBuilder();
 
                 for (String currency : currencies) {
-                    var price = CryptoPrice.spotPrice(currency.trim().toUpperCase());
-                    response.append(currency.toUpperCase()).append(" price: ").append(price.getAmount().doubleValue()).append("\n");
+                    sendPrice(chatId, currency);
                 }
 
-                message.setText(response.toString());
             } else {
                 switch (text) {
-                    case "/start" -> message.setText("Hello!");
+                    case "/start" -> {
+                        sendMessage(chatId, "Hello!");
+                    }
                     case "all" -> {
                         String[] stringArray = new String[5];
 
@@ -49,43 +45,45 @@ public class OwnBot extends TelegramLongPollingBot {
                         stringArray[3] = "BNB";
                         stringArray[4] = "SOL";
 
-                        StringBuilder response = new StringBuilder();
-
                         for (String currency : stringArray) {
-                            var price = CryptoPrice.spotPrice(currency.trim());
-                            response.append(currency).append(" price: ").append(price.getAmount().doubleValue()).append("\n");
+                            sendPrice(chatId, currency);
                         }
-
-                        message.setText(response.toString());
                     }
                     case "eth" -> {
-                        var price = CryptoPrice.spotPrice("ETH");
-                        message.setText("ETH price: " + price.getAmount().doubleValue());
+                        sendPrice(chatId, "ETH");
                     }
                     case "btc" -> {
-                        var price = CryptoPrice.spotPrice("BTC");
-                        message.setText("BTC price: " + price.getAmount().doubleValue());
+                        sendPrice(chatId, "BTC");
                     }
                     case "doge" -> {
-                        var price = CryptoPrice.spotPrice("DOGE");
-                        message.setText("ETH price: " + price.getAmount().doubleValue());
+                        sendPrice(chatId, "DOGE");
                     }
                     case "bnb" -> {
-                        var price = CryptoPrice.spotPrice("BNB");
-                        message.setText("ETH price: " + price.getAmount().doubleValue());
+                        sendPrice(chatId, "BNB");
                     }
                     case "sol" -> {
-                        var price = CryptoPrice.spotPrice("SOL");
-                        message.setText("ETH price: " + price.getAmount().doubleValue());
+                        sendPrice(chatId, "SOL");
                     }
-                    default -> message.setText("Unknown command!");
+                    default -> {
+                        sendMessage(chatId, "Unknown command!");
+                    }
                 }
             }
-
-            execute(message);
         } catch (Exception e) {
             System.out.println("Error!");
         }
+    }
+
+    void sendPrice(long chatId, String name) throws Exception {
+        var price = CryptoPrice.spotPrice(name);
+        sendMessage(chatId, name + " price: " + price.getAmount().doubleValue());
+    }
+
+    void sendMessage(long chatId, String text) throws Exception {
+        var message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText(text);
+        execute(message);
     }
 
 
